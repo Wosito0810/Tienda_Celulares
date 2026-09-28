@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Juego de Triki (Tres en línea) contra la máquina con 5 niveles de dificultad">
+    <title>Triki - Juega contra la máquina</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Pantalla de inicio -->
+        <section id="start-screen" class="screen active" aria-labelledby="game-title">
+            <div class="card">
+                <header class="card-header">
+                    <h1 id="game-title" class="game-title">Triki</h1>
+                    <p class="game-subtitle">Juega contra la máquina y demuestra tu estrategia</p>
+                </header>
+                
+                <div class="difficulty-selector" aria-label="Seleccionar dificultad">
+                    <h2 class="section-title">Selecciona la dificultad</h2>
+                    <div class="difficulty-options" role="radiogroup" aria-label="Niveles de dificultad">
+                        <label class="difficulty-option" data-level="1" role="radio" aria-checked="false" tabindex="0">
+                            <span class="difficulty-number">1</span>
+                            <div class="difficulty-info">
+                                <span class="difficulty-name">Muy fácil</span>
+                                <span class="difficulty-desc">Juega principalmente al azar, ideal para aprender</span>
+                            </div>
+                        </label>
+                        <label class="difficulty-option" data-level="2" role="radio" aria-checked="false" tabindex="0">
+                            <span class="difficulty-number">2</span>
+                            <div class="difficulty-info">
+                                <span class="difficulty-name">Fácil</span>
+                                <span class="difficulty-desc">Inteligencia básica, detecta victorias y bloqueos obvios</span>
+                            </div>
+                        </label>
+                        <label class="difficulty-option selected" data-level="3" role="radio" aria-checked="true" tabindex="0">
+                            <span class="difficulty-number">3</span>
+                            <div class="difficulty-info">
+                                <span class="difficulty-name">Intermedio</span>
+                                <span class="difficulty-desc">Estrategia equilibrada para jugador promedio</span>
+                            </div>
+                        </label>
+                        <label class="difficulty-option" data-level="4" role="radio" aria-checked="false" tabindex="0">
+                            <span class="difficulty-number">4</span>
+                            <div class="difficulty-info">
+                                <span class="difficulty-name">Difícil</span>
+                                <span class="difficulty-desc">Analiza movimientos futuros, detecta amenazas dobles</span>
+                            </div>
+                        </label>
+                        <label class="difficulty-option" data-level="5" role="radio" aria-checked="false" tabindex="0">
+                            <span class="difficulty-number">5</span>
+                            <div class="difficulty-info">
+                                <span class="difficulty-name">Experto</span>
+                                <span class="difficulty-desc">Minimax optimizado, prácticamente imbatible</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <button id="btn-play" class="btn btn-primary btn-large" type="button">
+                    <span class="btn-text">Jugar</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Pantalla de juego -->
+        <section id="game-screen" class="screen" aria-labelledby="game-board-title" hidden>
+            <header class="game-header">
+                <h2 id="game-board-title" class="visually-hidden">Tablero de juego</h2>
+                <div class="turn-indicator" aria-live="polite" aria-atomic="true">
+                    <span id="turn-text" class="turn-text">Tu turno</span>
+                    <span id="thinking-indicator" class="thinking-indicator hidden" aria-hidden="true">
+                        <span class="spinner"></span>
+                        La máquina está pensando...
+                    </span>
+                </div>
+            </header>
+
+            <main class="game-main">
+                <div class="board-container">
+                    <div id="board" class="board" role="grid" aria-label="Tablero de Triki 3 por 3">
+                        <button class="cell" data-index="0" role="gridcell" aria-label="Fila 1, Columna 1" tabindex="0"></button>
+                        <button class="cell" data-index="1" role="gridcell" aria-label="Fila 1, Columna 2" tabindex="0"></button>
+                        <button class="cell" data-index="2" role="gridcell" aria-label="Fila 1, Columna 3" tabindex="0"></button>
+                        <button class="cell" data-index="3" role="gridcell" aria-label="Fila 2, Columna 1" tabindex="0"></button>
+                        <button class="cell" data-index="4" role="gridcell" aria-label="Fila 2, Columna 2" tabindex="0"></button>
+                        <button class="cell" data-index="5" role="gridcell" aria-label="Fila 2, Columna 3" tabindex="0"></button>
+                        <button class="cell" data-index="6" role="gridcell" aria-label="Fila 3, Columna 1" tabindex="0"></button>
+                        <button class="cell" data-index="7" role="gridcell" aria-label="Fila 3, Columna 2" tabindex="0"></button>
+                        <button class="cell" data-index="8" role="gridcell" aria-label="Fila 3, Columna 3" tabindex="0"></button>
+                    </div>
+                    <div id="win-line" class="win-line hidden" aria-hidden="true"></div>
+                </div>
+
+                <aside class="game-sidebar">
+                    <div class="score-card">
+                        <h3 class="score-title">Marcador</h3>
+                        <div class="score-grid">
+                            <div class="score-item player-score">
+                                <span class="score-label">Tú</span>
+                                <span id="player-wins" class="score-value">0</span>
+                            </div>
+                            <div class="score-item machine-score">
+                                <span class="score-label">Máquina</span>
+                                <span id="machine-wins" class="score-value">0</span>
+                            </div>
+                            <div class="score-item draws-score">
+                                <span class="score-label">Empates</span>
+                                <span id="draws" class="score-value">0</span>
+                            </div>
+                        </div>
+                        <button id="btn-reset-stats" class="btn btn-secondary btn-small" type="button">
+                            Reiniciar estadísticas
+                        </button>
+                    </div>
+
+                    <div class="legend-card">
+                        <h3 class="legend-title">Símbolos</h3>
+                        <div class="legend-grid">
+                            <div class="legend-item">
+                                <span class="legend-symbol symbol-x" aria-hidden="true">X</span>
+                                <span class="legend-text">Tú (empiezas)</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-symbol symbol-o" aria-hidden="true">O</span>
+                                <span class="legend-text">Máquina</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="controls-card">
+                        <button id="btn-new-game" class="btn btn-primary" type="button">Nueva partida</button>
+                        <button id="btn-change-difficulty" class="btn btn-outline" type="button">Cambiar dificultad</button>
+                    </div>
+                </aside>
+            </main>
+        </section>
+
+        <!-- Modal de confirmación -->
+        <dialog id="confirm-dialog" class="confirm-dialog" role="alertdialog" aria-labelledby="dialog-title" aria-describedby="dialog-message">
+            <div class="dialog-content">
+                <h3 id="dialog-title" class="dialog-title"></h3>
+                <p id="dialog-message" class="dialog-message"></p>
+                <div class="dialog-actions">
+                    <button class="btn btn-secondary" id="dialog-cancel" type="button">Cancelar</button>
+                    <button class="btn btn-danger" id="dialog-confirm" type="button">Confirmar</button>
+                </div>
+            </div>
+        </dialog>
+
+        <!-- Modal de fin de partida -->
+        <dialog id="game-over-dialog" class="game-over-dialog" role="alertdialog" aria-labelledby="game-over-title" aria-describedby="game-over-message">
+            <div class="dialog-content">
+                <div id="game-over-icon" class="game-over-icon" aria-hidden="true"></div>
+                <h3 id="game-over-title" class="dialog-title"></h3>
+                <p id="game-over-message" class="dialog-message"></p>
+                <div class="dialog-actions">
+                    <button class="btn btn-primary" id="btn-play-again" type="button">Jugar de nuevo</button>
+                    <button class="btn btn-outline" id="btn-back-menu" type="button">Volver al menú</button>
+                </div>
+            </div>
+        </dialog>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
