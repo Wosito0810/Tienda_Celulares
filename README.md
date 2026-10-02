@@ -4,6 +4,8 @@ Proyecto front-end (HTML + CSS + Bootstrap 5 + JavaScript) basado en el mockup:
 header con buscador, hero, categorías populares, destacados, beneficios,
 newsletter y footer. Todo funcional, con paleta de marca e imágenes locales.
 
+## Autor: David Santiago Vargas Parra
+
 ## Paleta de colores
 
 | Rol | Nombre | Hex | Uso |
